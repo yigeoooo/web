@@ -1,20 +1,168 @@
 <script>
+import {select} from "@/api/house";
+
 export default {
   name: "house_main",
   data() {
-    return{
-
+    return {
+      houseState:[
+        {
+          label:'空闲',
+          value:'0',
+        },
+        {
+          label:'占用',
+          value:'1',
+        },
+        {
+          label:'已退房',
+          value:'2',
+        },
+        {
+          label:'打扫中',
+          value:'3',
+        },
+      ],
+      searchForm: {
+        page: 1,
+        size: 10,
+        houseName: '',
+        state: '',
+      },
+      tableData: [],
+      total: ''
     }
   },
+  created() {
+    this.init();
+  },
   methods: {
-
+    init() {
+      select(this.searchForm).then(res => {
+        if (res.resultCode === 200) {
+          this.tableData = res.body.records;
+          this.total = res.body.total
+        }
+      })
+    },
+    search() {
+      this.init();
+    },
+    handleSizeChange(val) {
+      this.searchForm.size = val;
+      this.init();
+    },
+    handleCurrentChange(val) {
+      this.searchForm.page = val;
+      this.init();
+    },
+    insert() {
+      this.$router.push({
+        name:'house_add',
+      })
+    },
   },
 }
 </script>
 
 <template>
   <div>
-    房间管理
+    <div style="float: left;margin-left: 20px;margin-top: 20px">
+      <el-form :inline="true" :model="searchForm" class="demo-form-inline">
+        <el-form-item label="房间名称">
+          <el-input v-model="searchForm.houseName" placeholder="请输入房间名称" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="房间状态">
+          <el-select v-model="searchForm.state" placeholder="请选择房间状态" clearable>
+            <el-option
+                v-for="(item, index) in houseState"
+                :key="index"
+                :label="item.label"
+                :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button plain @click="search" icon="el-icon-zoom-in">查询</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div style="float: right;margin-top: 20px">
+      <el-button type="primary" plain icon="el-icon-plus" @click="insert">新增</el-button>
+    </div>
+    <br><br><br>
+    <el-divider></el-divider>
+    <div>
+      <el-table
+          height="650"
+          :data="tableData"
+          border
+          style="width: 90%;margin-left: 5%">
+        <el-table-column
+            fixed
+            prop="houseName"
+            label="房间名称"
+            width="200">
+        </el-table-column>
+        <el-table-column
+            prop="houseNumber"
+            label="房间编号"
+            width="200">
+        </el-table-column>
+        <el-table-column
+            prop="password"
+            label="房间密码"
+            width="200">
+        </el-table-column>
+        <el-table-column
+            prop="price"
+            label="房间价格"
+            width="250">
+          <template slot-scope="scope">
+            {{scope.row.price}} 元/天
+          </template>
+        </el-table-column>
+        <el-table-column
+            prop="sort"
+            label="排序"
+            width="100">
+        </el-table-column>
+        <el-table-column
+            fixed="right"
+            label="状态"
+            width="200">
+          <template slot-scope="scope">
+            <el-tag type="success" v-if="scope.row.state === '0'">空闲</el-tag>
+            <el-tag v-if="scope.row.state === '1'">占用</el-tag>
+            <el-tag type="warning" v-if="scope.row.state === '2'">已退房</el-tag>
+            <el-tag type="info" v-if="scope.row.state === '3'">打扫中</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+            fixed="right"
+            label="操作"
+            width="600">
+          <template slot-scope="scope">
+            <el-button plain>预订情况</el-button>
+            <el-button type="success" plain v-if="scope.row.state === '0'">入住</el-button>
+            <el-button type="primary" plain v-if="scope.row.state === '1'">退房</el-button>
+            <el-button type="warning" plain v-if="scope.row.state === '2'">打扫</el-button>
+            <el-button type="info" plain v-if="scope.row.state === '3'">打扫完成</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <br>
+    <div>
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="searchForm.page"
+          :page-sizes="[10, 30, 50]"
+          :page-size="searchForm.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
+      </el-pagination>
+    </div>
   </div>
 </template>
 

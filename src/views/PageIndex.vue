@@ -16,7 +16,7 @@ export default {
   <div>
     <div style="margin-top: 10%">
       <h1>
-        您好，{{userName}}！欢迎登陆XXX系统！
+        您好，{{userName}}！欢迎登陆民宿管理系统！
       </h1>
     </div>
   </div>

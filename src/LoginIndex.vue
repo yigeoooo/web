@@ -30,7 +30,7 @@ export default {
 <template>
   <div id="div">
     <div id="bck">
-      <h1>XXX管理系统</h1><br>
+      <h1>民宿管理系统</h1><br>
       <div style="margin-left: 40px">
         <el-form label-position="left" label-width="80px" v-model="form" style="width: 400px">
           <el-form-item label="用户ID">

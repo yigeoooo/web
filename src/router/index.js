@@ -25,6 +25,11 @@ const routes = [
         component: () => import('@/views/menu/Menu_main.vue'),
       },
       {
+        path: 'menu_add',
+        name: 'menu_add',
+        component: () => import('@/views/menu/menu_add.vue'),
+      },
+      {
         path: 'department',
         name: 'department',
         component: () => import('@/views/department/Department.vue'),
@@ -48,6 +53,11 @@ const routes = [
         path: 'account',
         name: 'account',
         component: () => import('@/views/account/Account.vue'),
+      },
+      {
+        path: 'house',
+        name: 'house',
+        component: () => import('@/views/house/house.vue'),
       },
     ]
   },

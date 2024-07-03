@@ -79,6 +79,11 @@ export default {
         }
       })
     },
+    insert() {
+      this.$router.push({
+        name:'menu_add',
+      })
+    },
   },
 }
 </script>

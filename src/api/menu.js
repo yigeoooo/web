@@ -22,3 +22,18 @@ export function getPer(userId) {
         method:'GET',
     })
 }
+
+export function getParentMenuList() {
+    return request({
+        url:'/menu-master/parentMenuList',
+        method:'GET',
+    })
+}
+
+export function addMenu(data) {
+    return request({
+        url:'/menu-master/add',
+        method:'Post',
+        data:data
+    })
+}

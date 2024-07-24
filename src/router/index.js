@@ -64,6 +64,11 @@ const routes = [
         name: 'house_add',
         component: () => import('@/views/house/house_add.vue'),
       },
+      {
+        path: 'order',
+        name: 'order',
+        component: () => import('@/views/order/Order.vue'),
+      },
     ]
   },
 ]

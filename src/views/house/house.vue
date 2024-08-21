@@ -1,10 +1,23 @@
 <script>
-import {select} from "@/api/house";
+import {clean, editHouse, editHouseState, finish, select} from "@/api/house";
+import {selectPage} from "@/api/order";
 
 export default {
   name: "house_main",
   data() {
     return {
+      visible:false,
+      form:{
+
+      },
+      dialogTableVisible:false,
+      infoData:[],
+      houseId:'',
+      infoForm:{
+        total: '',
+        page: 1,
+        size: 10,
+      },
       houseState:[
         {
           label:'空闲',
@@ -59,6 +72,86 @@ export default {
     insert() {
       this.$router.push({
         name:'house_add',
+      })
+    },
+    getPage(id) {
+      this.houseId = id;
+      this.dialogTableVisible = true;
+      const data = {
+        id: id,
+        page: 1,
+        size: 10
+      }
+      selectPage(data).then(res => {
+        this.infoData = res.body.records;
+        this.infoForm.total = res.body.total
+      })
+    },
+    sizeChange(val) {
+      this.infoForm.size = val;
+      this.getPage(this.houseId);
+    },
+    currentChange(val) {
+      this.infoForm.page = val;
+      this.getPage(this.houseId);
+    },
+    intoHouse(id) {
+      this.houseId = id;
+      this.visible = true;
+    },
+    sureToHouse() {
+       const data = {
+         userId: this.form.userId,
+         houseId : this.houseId
+       }
+      editHouse(data).then(res => {
+        if (res.resultCode === 200) {
+          this.$message({
+            type:'success',
+            message:'入住成功!'
+          })
+          this.visible = false;
+          this.init();
+        }
+      })
+    },
+    returnHouse(id) {
+      editHouseState({
+        houseId:id,
+      }).then(res => {
+        if (res.resultCode === 200) {
+          this.$message({
+            type:'success',
+            message:'退房成功!'
+          })
+        }
+        this.init();
+      })
+    },
+    cleanHouse(id) {
+      clean({
+        houseId: id
+      }).then(res => {
+        if (res.resultCode === 200) {
+          this.$message({
+            type:'success',
+            message:'成功!'
+          })
+        }
+        this.init();
+      })
+    },
+    finishClean(id) {
+      finish({
+        houseId: id
+      }).then(res => {
+        if (res.resultCode === 200) {
+          this.$message({
+            type:'success',
+            message:'打扫成功!'
+          })
+        }
+        this.init();
       })
     },
   },
@@ -124,7 +217,7 @@ export default {
         <el-table-column
             prop="sort"
             label="排序"
-            width="100">
+            width="50">
         </el-table-column>
         <el-table-column
             fixed="right"
@@ -138,15 +231,20 @@ export default {
           </template>
         </el-table-column>
         <el-table-column
+            prop="userName"
+            label="当前入住人"
+            width="100">
+        </el-table-column>
+        <el-table-column
             fixed="right"
             label="操作"
             width="600">
           <template slot-scope="scope">
-            <el-button plain>预订情况</el-button>
-            <el-button type="success" plain v-if="scope.row.state === '0'">入住</el-button>
-            <el-button type="primary" plain v-if="scope.row.state === '1'">退房</el-button>
-            <el-button type="warning" plain v-if="scope.row.state === '2'">打扫</el-button>
-            <el-button type="info" plain v-if="scope.row.state === '3'">打扫完成</el-button>
+            <el-button plain @click="getPage(scope.row.id)">预订情况</el-button>
+            <el-button type="success" plain v-if="scope.row.state === '0'" @click="intoHouse(scope.row.id)">入住</el-button>
+            <el-button type="primary" plain v-if="scope.row.state === '1'" @click="returnHouse(scope.row.id)">退房</el-button>
+            <el-button type="warning" plain v-if="scope.row.state === '2'" @click="cleanHouse(scope.row.id)">打扫</el-button>
+            <el-button type="info" plain v-if="scope.row.state === '3'" @click="finishClean(scope.row.id)">打扫完成</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -163,6 +261,49 @@ export default {
           :total="total">
       </el-pagination>
     </div>
+
+    <el-dialog title="详情" :visible.sync="dialogTableVisible" width="65%">
+      <el-table :data="infoData">
+        <el-table-column property="houseName" label="房间名称" width="150"></el-table-column>
+        <el-table-column property="houseNumber" label="房间编号" width="200"></el-table-column>
+        <el-table-column property="beginDate" label="入住时间" width="200"></el-table-column>
+        <el-table-column property="lastDate" label="退房时间" width="200"></el-table-column>
+        <el-table-column property="days" label="共计日"></el-table-column>
+        <el-table-column property="totalPrice" label="总金额"></el-table-column>
+        <el-table-column property="userId" label="预订人ID" width="200"></el-table-column>
+        <el-table-column property="userName" label="预订人"></el-table-column>
+        <el-table-column property="state" label="状态">
+          <template slot-scope="scope">
+            <el-tag type="success" v-if="scope.row.state === '1'">进行中</el-tag>
+            <el-tag type="primary" v-if="scope.row.state === '0'">完成</el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-divider></el-divider>
+      <div>
+        <el-pagination
+            @size-change="sizeChange"
+            @current-change="currentChange"
+            :current-page="infoForm.page"
+            :page-sizes="[10, 30, 50]"
+            :page-size="infoForm.size"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="infoForm.total">
+        </el-pagination>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="入住" :visible.sync="visible" width="35%">
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="ID">
+          <el-input v-model="form.userId"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="success" plain @click="sureToHouse">入住</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
   </div>
 </template>
 

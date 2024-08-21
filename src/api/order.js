@@ -7,3 +7,12 @@ export function addOrder(data) {
         data:data
     })
 }
+
+export function selectPage(data) {
+    return request({
+        url:'/orderMaster/page',
+        method:'GET',
+        params:data
+    })
+}
+

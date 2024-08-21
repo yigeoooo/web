@@ -1,6 +1,7 @@
 <script>
 import {select} from "@/api/house";
 import {left} from "core-js/internals/array-reduce";
+import {addOrder} from "@/api/order";
 
 export default {
   name: "OrderPage",
@@ -77,7 +78,21 @@ export default {
     },
     orderHouse() {
       this.dialogVisible = false;
-      console.log(this.date)
+      const data = {
+        beginDate : this.date[0],
+        lastDate : this.date[1],
+        houseId : this.info.id,
+        days: this.form.days,
+        totalPrice : this.form.price,
+      };
+      addOrder(data).then(res => {
+        if (res.resultCode === 200) {
+          this.$message({
+            type:'success',
+            message:'房间预定成功！'
+          })
+        }
+      })
     },
   },
 }

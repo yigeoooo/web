@@ -1,4 +1,6 @@
 <script>
+import {editDepartment} from "@/api/department";
+
 export default {
   name: "Department_edit",
   data() {
@@ -19,7 +21,17 @@ export default {
       this.$router.push({name: 'department'})
     },
     edit() {
-      console.log(this.$route.query)
+      editDepartment(this.editForm).then(res => {
+        if (res.resultCode === 200) {
+          this.$message({
+            type:'success',
+            message:'修改部门成功！'
+          })
+          this.$router.push({
+            name:'department'
+          })
+        }
+      })
     },
   },
 }

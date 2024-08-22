@@ -29,3 +29,11 @@ export function getOptions() {
         method:'GET',
     })
 }
+
+export function editDepartment(data) {
+    return request({
+        url:`/department-master/edit`,
+        method:'PATCH',
+        data:data
+    })
+}

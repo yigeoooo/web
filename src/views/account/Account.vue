@@ -102,7 +102,7 @@ export default {
             label="操作"
             width="300">
           <template slot-scope="scope">
-            <el-button icon="el-icon-setting" @click="handleClick(scope.row)" size="small" plain type="primary">修改</el-button>
+<!--            <el-button icon="el-icon-setting" @click="handleClick(scope.row)" size="small" plain type="primary">修改</el-button>-->
             <el-button icon="el-icon-delete" @click="deleteRole(scope.row)" type="danger" size="small" plain>删除</el-button>
           </template>
         </el-table-column>

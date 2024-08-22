@@ -40,6 +40,11 @@ const routes = [
         component: () => import('@/views/department/Department_add.vue'),
       },
       {
+        path: 'department_edit',
+        name: 'department_edit',
+        component: () => import('@/views/department/Department_edit.vue'),
+      },
+      {
         path: 'role',
         name: 'role',
         component: () => import('@/views/role/Role_main.vue'),

@@ -55,6 +55,11 @@ const routes = [
         component: () => import('@/views/role/Role_add.vue'),
       },
       {
+        path: 'role_update',
+        name: 'role_update',
+        component: () => import('@/views/role/Role_update.vue'),
+      },
+      {
         path: 'account',
         name: 'account',
         component: () => import('@/views/account/Account.vue'),

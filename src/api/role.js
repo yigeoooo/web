@@ -29,3 +29,11 @@ export function getRoleOptions(departmentId) {
         method:'GET',
     })
 }
+
+export function editRole(data) {
+    return request({
+        url:`/role-master/edit`,
+        method:'POST',
+        data:data
+    })
+}
